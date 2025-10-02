@@ -1,0 +1,12 @@
+[project]
+name = "pa1-agents"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "google-adk (>=1.5.0,<2.0.0)",
+    "google-cloud-aiplatform[adk,agent-engines] (>=1.100.0,<2.0.0)",
+    "python-dotenv (>=1.1.1,<2.0.0)",
+    "google-cloud-secret-manager (>=2.24.0,<3.0.0)"
+]
