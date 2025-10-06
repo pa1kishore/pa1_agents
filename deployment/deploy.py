@@ -36,6 +36,7 @@ logger = logging.getLogger(__name__)
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
 STAGING_BUCKET = os.getenv("GOOGLE_CLOUD_STORAGE_BUCKET")
+AGENT_DISPLAY_NAME = 'ask_agent'
 
 ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -63,20 +64,40 @@ app = AdkApp(
 
 logging.debug("deploying agent to agent engine:")
 
-remote_app = agent_engines.create(
-    app,
-    display_name="ask_agent",
-    requirements=[
-        "google-cloud-aiplatform[adk,agent-engines]>=1.100.0,<2.0.0",
-        "google-adk>=1.5.0,<2.0.0",
-        "python-dotenv",
-        "google-cloud-secret-manager"
-    ],
-    extra_packages=[
-        "./ask_agent",
-    ],
-)
+def upsert_agent():
+    try:
+        # Try to get the existing agent
+        print(f"Checking for existing agent with display name: {AGENT_DISPLAY_NAME}...")
+        remote_app = agent_engines.get(AGENT_DISPLAY_NAME)
+        
+        # If it exists, update it
+        print("Agent found. Updating the existing agent...")
+        updated_app = remote_app.update(
+            agent_engine=app,
+            # Update other configurable parameters if needed
+        )
+        print(f"Successfully updated agent: {updated_app.display_name}")
 
+    except:
+        # If the agent doesn't exist, create it
+        print("Agent not found. Creating a new agent...")
+        remote_app = agent_engines.create(
+                        app,
+                        display_name=AGENT_DISPLAY_NAME,
+                        requirements=[
+                            "google-cloud-aiplatform[adk,agent-engines]>=1.100.0,<2.0.0",
+                            "google-adk>=1.5.0,<2.0.0",
+                            "python-dotenv",
+                            "google-cloud-secret-manager"
+                        ],
+                        extra_packages=[
+                            "./ask_agent",
+                        ],
+                    )
+    print(f"Successfully created new agent: {remote_app.display_name}")
+    return remote_app
+
+upsert_agent()
 # log remote_app
 logging.info(f"Deployed agent to Vertex AI Agent Engine successfully, resource name: {remote_app.resource_name}")
 
