@@ -14,7 +14,7 @@
 
 import sys
 import os
-
+from datetime import datetime
 # Add the project root to sys.path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 if project_root not in sys.path:
@@ -37,6 +37,7 @@ GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
 STAGING_BUCKET = os.getenv("GOOGLE_CLOUD_STORAGE_BUCKET")
 AGENT_DISPLAY_NAME = 'ask_agent'
+AGENT_ID='6937606109964271616'
 
 ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -51,9 +52,9 @@ def update_env_file(agent_engine_id, env_file_path):
     """Updates the .env file with the agent engine ID."""
     try:
         set_key(env_file_path, "AGENT_ENGINE_ID", agent_engine_id)
-        print(f"Updated AGENT_ENGINE_ID in {env_file_path} to {agent_engine_id}")
+        logger.info(f"Updated AGENT_ENGINE_ID in {env_file_path} to {agent_engine_id}")
     except Exception as e:
-        print(f"Error updating .env file: {e}")
+        logger.info(f"Error updating .env file: {e}")
 
 logger.info("deploying app...")
 
@@ -65,25 +66,34 @@ app = AdkApp(
 logging.debug("deploying agent to agent engine:")
 
 def upsert_agent():
+    new_agent=None
     try:
         # Try to get the existing agent
-        print(f"Checking for existing agent with display name: {AGENT_DISPLAY_NAME}...")
-        remote_app = agent_engines.get(AGENT_DISPLAY_NAME)
+        logging.info(f"Checking for existing agent with display name: {AGENT_DISPLAY_NAME}...")
+        existing_agents = agent_engines.list()
+        if existing_agents !=None:
+            for i in iter(existing_agents):
+                logging.info(f'agents :{i.name}')
+        new_agent = agent_engines.get(AGENT_ID)
         
         # If it exists, update it
-        print("Agent found. Updating the existing agent...")
-        updated_app = remote_app.update(
+        logging.info("Agent found. Updating the existing agent...")
+        updated_app = new_agent.update(
             agent_engine=app,
+            display_name= AGENT_DISPLAY_NAME,
+            description= f'{AGENT_DISPLAY_NAME} updated on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}'
             # Update other configurable parameters if needed
         )
-        print(f"Successfully updated agent: {updated_app.display_name}")
+        logging.info(f"Successfully updated agent: {updated_app.display_name}")
 
-    except:
+    except Exception as e:
         # If the agent doesn't exist, create it
-        print("Agent not found. Creating a new agent...")
-        remote_app = agent_engines.create(
+        logging.error(f'Agent not found. {e}')
+        logging.info("Agent not found. Creating a new agent...")
+        new_agent = agent_engines.create(
                         app,
                         display_name=AGENT_DISPLAY_NAME,
+                        description= f'{AGENT_DISPLAY_NAME} created on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}',
                         requirements=[
                             "google-cloud-aiplatform[adk,agent-engines]>=1.100.0,<2.0.0",
                             "google-adk>=1.5.0,<2.0.0",
@@ -94,10 +104,11 @@ def upsert_agent():
                             "./ask_agent",
                         ],
                     )
-    print(f"Successfully created new agent: {remote_app.display_name}")
-    return remote_app
+        logging.info(f"Successfully created new agent: {new_agent.display_name}")
 
-upsert_agent()
+    return new_agent
+
+remote_app = upsert_agent()
 # log remote_app
 logging.info(f"Deployed agent to Vertex AI Agent Engine successfully, resource name: {remote_app.resource_name}")
 
