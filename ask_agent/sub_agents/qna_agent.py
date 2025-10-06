@@ -1,5 +1,5 @@
 # agent.py
-from tools.tool_qna_search import tool_qna_search
+from ask_agent.tools.tool_qna_search import tool_qna_search
 from google.adk.agents import Agent
 
 # 1. Instantiate the GoogleSearch tool
