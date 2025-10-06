@@ -1,0 +1,90 @@
+"""
+This tool, retuns information from AT&T Portal about AT&T products and services. This tool also returns steps for troubleshoot any user issues.
+"""
+from google.adk.tools.tool_context import ToolContext
+import os
+import urllib.parse
+import requests
+import urllib3
+import json
+from urllib3.exceptions import InsecureRequestWarning
+
+urllib3.disable_warnings(InsecureRequestWarning)
+search_api_host = os.getenv('SEARCH_API_BASE')
+if search_api_host is None or search_api_host.strip() =='':
+    search_api_host= 'https://services.att.com'
+
+def tool_qna_search (query: str,tool_context: ToolContext) -> dict:
+    """
+    This tool, retuns information from AT&T Portal about AT&T products and services. This tool also returns steps for troubleshoot any user issues.
+
+    Args:
+        query (str): query to perform search in AT&T portal
+        tool_context (ToolContext): The tool context
+        
+
+    Returns:
+        dict: documents sematically matching with user query
+               dict contains: status: tool execution status (success or error), message: if any error or success, data: tool response
+    """
+    # print('Tool started tool_qna_search')
+    # Validate inputs
+    if query is None or query.strip() == '':
+        return {
+            "status": "error",
+            "message": "Tool input validation failed. User query is empty"
+        }
+    if '*' in query:
+        #query contain * search calls fails return without calling seach api or replace with something else
+        # print('query cotains "*"')
+        return {
+            "status": "error",
+            "message": "Tool input validation failed. query cotains '*'"
+        }
+    # Pre-process any input parameters processing
+        #nothing
+    
+
+    try:
+        headers = {
+            'Content-Type':"application/json"
+        }
+        # get data from backend
+        #API: https://services.att.com/search/v1/topdocs?app-id=sitesearch&rows=100&q=apple%20iphone%2016
+
+        url =f"{search_api_host}//search/v1/topdocs?app-id=sitesearch&rows=7&fl=chatURL,los,chunk_html,chunk_markdown,title&q={urllib.parse.quote_plus(query)}"
+        # print(f'Final search query {url}')
+        search_response = requests.request('GET', url, headers=headers, verify=False)
+        final_response ={
+            "status":"success"
+        }
+        if search_response.status_code ==200:
+            documents = json.loads(search_response.text)['response']['docs']
+            docs=[]
+            for doc in documents:
+                content = doc['chunk_markdown'] if 'chunk_markdown' in doc else None
+                if content is None:
+                    content = doc['chunk_html'] if 'chunk_html' in doc else None
+                docs.append({
+                    "url": doc['chatURL'] if 'chatURL' in doc else None,
+                    "content": content,
+                    "title": doc['title'] if 'title' in doc else None,
+                })
+                
+            final_response['data'] = docs 
+        # print (f'Returning search restults {final_response}')
+        return final_response
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": f"Error get data from search api: {str(e)}"
+        }
+    # Post-process any input parameters processing
+        #nothing
+
+
+
+
+# if __name__ == '__main__':
+#    res= tool_qna_search(query="how to setup voicemail",tool_context=None)
+#    print(f' search tool response {res}')
