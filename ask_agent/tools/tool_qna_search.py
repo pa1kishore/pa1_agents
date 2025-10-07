@@ -14,7 +14,7 @@ search_api_host = os.getenv('SEARCH_API_BASE')
 if search_api_host is None or search_api_host.strip() =='':
     search_api_host= 'https://services.att.com'
 
-def tool_qna_search (query: str,tool_context: ToolContext) -> dict:
+def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
     """
     This tool, retuns information from AT&T Portal about AT&T products and services. This tool also returns steps for troubleshoot any user issues.
 
@@ -86,5 +86,5 @@ def tool_qna_search (query: str,tool_context: ToolContext) -> dict:
 
 
 # if __name__ == '__main__':
-#    res= tool_qna_search(query="how to setup voicemail",tool_context=None)
+#    res= tool_support_qna_search(query="how to setup voicemail",tool_context=None)
 #    print(f' search tool response {res}')
