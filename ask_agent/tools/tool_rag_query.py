@@ -6,8 +6,10 @@ import logging
 import os
 import re
 from google.adk.tools.tool_context import ToolContext
+import vertexai
 from vertexai import rag
 logger = logging.getLogger(__name__)
+
 
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
 RAG_CORPUS_LOCATION = os.getenv("RAG_CORPUS_LOCATION")
@@ -16,6 +18,10 @@ DEFAULT_DISTANCE_THRESHOLD =0.8
 DEFAULT_TOP_K=10
 RAG_CORPUS_NAME = os.getenv("RAG_CORPUS_NAME")
 
+vertexai.init(
+    project=GOOGLE_CLOUD_PROJECT,
+    location=RAG_CORPUS_LOCATION
+)
 def get_corpus_resource_name(corpus_name: str) -> str:
     """
     Convert a corpus name to its full resource name if needed.
@@ -103,7 +109,6 @@ def check_corpus_exists(corpus_name: str, tool_context: ToolContext) -> bool:
     return True
 
 def tool_rag_query(
-    corpus_name: str,
     query: str,
     tool_context: ToolContext,
 ) -> dict:
@@ -111,16 +116,17 @@ def tool_rag_query(
     Query a Vertex AI RAG corpus with a user question and return relevant information.
 
     Args:
-        corpus_name (str): The name of the corpus to query. If empty, the current corpus will be used.
-                          Preferably use the resource_name from list_corpora results.
         query (str): The text query to search for in the corpus
         tool_context (ToolContext): The tool context
 
     Returns:
         dict: The query results and status
     """
-    try:
 
+        # corpus_name (str): The name of the corpus to query. If empty, the current corpus will be used.
+        #                   Preferably use the resource_name from list_corpora results.
+    try:
+        corpus_name = RAG_CORPUS_NAME
         # Check if the corpus exists
         if not check_corpus_exists(corpus_name, tool_context):
             return {

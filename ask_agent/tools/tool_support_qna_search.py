@@ -10,9 +10,10 @@ import json
 from urllib3.exceptions import InsecureRequestWarning
 
 urllib3.disable_warnings(InsecureRequestWarning)
-search_api_host = os.getenv('SEARCH_API_BASE')
-if search_api_host is None or search_api_host.strip() =='':
-    search_api_host= 'https://services.att.com'
+# search_api_host = os.getenv('SEARCH_API_BASE')
+# if search_api_host is None or search_api_host.strip() =='':
+    # search_api_host= 'https://services.att.com'
+search_api_host= 'https://services.att.com'    
 
 def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
     """
@@ -29,18 +30,18 @@ def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
     """
     # print('Tool started tool_qna_search')
     # Validate inputs
-    if query is None or query.strip() == '':
-        return {
-            "status": "error",
-            "message": "Tool input validation failed. User query is empty"
-        }
-    if '*' in query:
-        #query contain * search calls fails return without calling seach api or replace with something else
-        # print('query cotains "*"')
-        return {
-            "status": "error",
-            "message": "Tool input validation failed. query cotains '*'"
-        }
+    # if query is None or query.strip() == '':
+    #     return {
+    #         "status": "error",
+    #         "message": "Tool input validation failed. User query is empty"
+    #     }
+    # if '*' in query:
+    #     #query contain * search calls fails return without calling seach api or replace with something else
+    #     # print('query cotains "*"')
+    #     return {
+    #         "status": "error",
+    #         "message": "Tool input validation failed. query cotains '*'"
+    #     }
     # Pre-process any input parameters processing
         #nothing
     
@@ -53,7 +54,7 @@ def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
         #API: https://services.att.com/search/v1/topdocs?app-id=sitesearch&rows=100&q=apple%20iphone%2016
 
         url =f"{search_api_host}//search/v1/topdocs?app-id=sitesearch&rows=7&fl=chatURL,los,chunk_html,chunk_markdown,title&q={urllib.parse.quote_plus(query)}"
-        # print(f'Final search query {url}')
+        print(f'Final search query {url}')
         search_response = requests.request('GET', url, headers=headers, verify=False)
         final_response ={
             "status":"success"
