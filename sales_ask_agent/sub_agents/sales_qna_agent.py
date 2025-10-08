@@ -1,5 +1,5 @@
 # agent.py
-from ask_agent.tools.tool_rag_query import tool_rag_query
+from sales_ask_agent.tools.tool_rag_query import tool_rag_query
 from google.adk.agents import Agent
 import os
 # RAG_CORPUS_NAME = os.getenv("RAG_CORPUS_NAME")
@@ -21,6 +21,8 @@ instruction = """
     1. First, query existing information.
     2. If they're asking a knowledge question or sales inquire, use the `tool_rag_query` tool to search the corpus.
     3. If unable to get required information from tool or failed handover back to root_agent.
+    4. If user query is related to troubleshoot or service support then always return "TRANSFER_AGENT_SUPPORT"
+    5. If user requesting for human agent or representative or need human intervention then always return "TRANSFER_HUMAN_AGENT"
     
     ## Using Tools
     

@@ -7,15 +7,17 @@ import urllib.parse
 import requests
 import urllib3
 import json
+import logging
 from urllib3.exceptions import InsecureRequestWarning
 
 urllib3.disable_warnings(InsecureRequestWarning)
+logger = logging.getLogger(__name__)
 # search_api_host = os.getenv('SEARCH_API_BASE')
 # if search_api_host is None or search_api_host.strip() =='':
     # search_api_host= 'https://services.att.com'
 search_api_host= 'https://services.att.com'    
 
-def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
+def tool_support_qna_topdocs(query: str,tool_context: ToolContext) -> dict:
     """
     This tool, retuns information from AT&T Portal about AT&T products and services. This tool also returns steps for troubleshoot any user issues.
 
@@ -28,33 +30,35 @@ def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
         dict: documents sematically matching with user query
                dict contains: status: tool execution status (success or error), message: if any error or success, data: tool response
     """
-    # print('Tool started tool_qna_search')
+    logger.info('Tool started tool_qna_search')
     # Validate inputs
-    # if query is None or query.strip() == '':
-    #     return {
-    #         "status": "error",
-    #         "message": "Tool input validation failed. User query is empty"
-    #     }
-    # if '*' in query:
-    #     #query contain * search calls fails return without calling seach api or replace with something else
-    #     # print('query cotains "*"')
-    #     return {
-    #         "status": "error",
-    #         "message": "Tool input validation failed. query cotains '*'"
-    #     }
+    if query is None or query.strip() == '':
+
+        return {
+            "status": "error",
+            "message": "Tool input validation failed. User query is empty"
+        }
+    if '*' in query:
+        #query contain * search calls fails return without calling seach api or replace with something else
+        # logger.info('query cotains "*"')
+        return {
+            "status": "error",
+            "message": "Tool input validation failed. query cotains '*'"
+        }
     # Pre-process any input parameters processing
-        #nothing
+        # nothing
     
 
     try:
         headers = {
-            'Content-Type':"application/json"
+            'Content-Type':"application/json",
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36'
         }
         # get data from backend
         #API: https://services.att.com/search/v1/topdocs?app-id=sitesearch&rows=100&q=apple%20iphone%2016
 
-        url =f"{search_api_host}//search/v1/topdocs?app-id=sitesearch&rows=7&fl=chatURL,los,chunk_html,chunk_markdown,title&q={urllib.parse.quote_plus(query)}"
-        print(f'Final search query {url}')
+        url =f"{search_api_host}/search/v1/topdocs?app-id=sitesearch&rows=7&fl=chatURL,los,chunk_html,chunk_markdown,title&q={urllib.parse.quote_plus(query)}"
+        logger.info(f'Final search query {url}')
         search_response = requests.request('GET', url, headers=headers, verify=False)
         final_response ={
             "status":"success"
@@ -73,7 +77,14 @@ def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
                 })
                 
             final_response['data'] = docs 
-        # print (f'Returning search restults {final_response}')
+        else:
+            logger.info(f"failed to get documents using tool_support_qna_topdocs tool status code: {search_response.status_code} ")
+            final_response = {
+                 "status": "error",
+                "message": f"Error get data from search api status code: {search_response.status_code}",
+                "url": url
+            }
+        # logger.info (f'Returning search restults {final_response}')
         return final_response
     except Exception as e:
         return {
@@ -88,4 +99,4 @@ def tool_support_qna_search (query: str,tool_context: ToolContext) -> dict:
 
 # if __name__ == '__main__':
 #    res= tool_support_qna_search(query="how to setup voicemail",tool_context=None)
-#    print(f' search tool response {res}')
+#    logger.info(f' search tool response {res}')

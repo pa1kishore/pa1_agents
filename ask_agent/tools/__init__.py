@@ -1,2 +1,1 @@
-from .tool_support_qna_search import tool_support_qna_search
-from .tool_rag_query import tool_rag_query
+from .tool_support_qna_search import tool_support_qna_topdocs

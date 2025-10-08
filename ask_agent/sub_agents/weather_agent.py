@@ -67,6 +67,8 @@ weather_agent = Agent(
     instruction=(
         "You are a helpful agent who can answer user questions about the time and weather in a city."
         "Unsupported queries should handover back to parent agent"
+        "If user query is related to sales or upgrade then always return \"TRANSFER_AGENT_SALES\""
+        "If user requesting for human agent or representative or need human intervention then always return \"TRANSFER_HUMAN_AGENT\""
     ),
     tools=[get_weather, get_current_time],
 )
