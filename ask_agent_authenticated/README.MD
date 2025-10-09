@@ -8,9 +8,9 @@ export PATH="$PATH:/Users/pa1/Downloads/google-cloud-sdk/bin"
 adk deploy cloud_run \
 --project=$GOOGLE_CLOUD_PROJECT \
 --region=$GOOGLE_CLOUD_LOCATION \
---service_name=ask-agent-authenticated \
---app_name=ask_agent_authenticated \
+--service_name=ask-agent \
+--app_name=ask_agent \
 --with_ui \
-ask_agent_authenticated
+ask_agent
 </pre>
 
