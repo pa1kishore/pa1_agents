@@ -28,8 +28,8 @@ def tool_support_qna_topdocs(query: str,tool_context: ToolContext) -> dict:
         
 
     Returns:
-        dict: documents sematically matching with user query
-               dict contains: status: tool execution status (success or error), message: if any error or success, data: tool response
+        dict: A dictionary with keys 'success' (str) and 'message' (str),
+              additionally returns 'data' (list[dict]) documents sematically matching with user query and url (str) search api url if successful.
     """
     logger.info('Tool started tool_qna_search')
     # Validate inputs

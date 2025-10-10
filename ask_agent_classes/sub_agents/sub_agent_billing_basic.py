@@ -1,0 +1,19 @@
+import os
+import pathlib
+import json
+from ask_agent_classes.prompts.billing_prompts import SUPPORT_BILLING_BASIC_AGENT_PROMPT
+from google.adk.agents import Agent
+from google.adk.tools import AgentTool
+from ask_agent_classes.constants import GEMINI_2_5_MODEL
+from typing import ClassVar
+from ask_agent_classes.sub_agents.sub_agent_qna import SupportQnAAgent
+
+class BillingBasicAgent(Agent):
+    def __init__(self, **kwargs):
+        super().__init__(
+            name="billing_basic_agent",
+            model=GEMINI_2_5_MODEL,
+            instruction=SUPPORT_BILLING_BASIC_AGENT_PROMPT,
+            # tools=[AgentTool(SupportQnAAgent())],
+            **kwargs
+        )
