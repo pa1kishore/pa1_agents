@@ -1,0 +1,32 @@
+{
+  "name": "mcp_ask_agent_server",
+  "version": "1.0.0",
+  "description": "Spectra MCP Server consumed by Spectra Agentic Agents for contextual data extraction",
+  "main": "server.js",
+  "scripts": {
+    "start": "node dist/server.js",
+    "build": "tsc",
+    "dev": "ts-node src/server.ts",
+    "test": "jest"
+  },
+  "keywords": [
+    "Spectra",
+    "MCP"
+  ],
+  "author": "Pavan Kishore Chippagiri",
+  "license": "ISC",
+  "devDependencies": {
+    "@modelcontextprotocol/inspector": "^0.17.0",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.7.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.20.0",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "googleapis": "^162.0.0",
+    "zod": "^3.25.76"
+  }
+}

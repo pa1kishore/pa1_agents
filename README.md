@@ -14,3 +14,14 @@ adk deploy cloud_run \
 ask_agent
 </pre>
 
+
+#### Option-2 Deploying Ask Agents on cloud run
+<pre>
+adk deploy agent_engine \
+--project=$GOOGLE_CLOUD_PROJECT \
+--region=$GOOGLE_CLOUD_LOCATION \
+--staging_bucket=gs://pa1_adk_agents \
+--display_name=ask-agent \
+ask_agent
+</pre>
+

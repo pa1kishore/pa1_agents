@@ -26,6 +26,21 @@
                     "--log_level",
                     "debug"
                 ]
-            }
+            },
+            {
+            "type": "node",
+            "request": "launch",
+            "name": "Start Ask Agent MCP Server",
+            "cwd":"${workspaceFolder}/mcp_ask_agent_server",
+            "preLaunchTask": "tsc: build",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "program": "${workspaceFolder}/mcp_ask_agent_server/dist/server.js",
+            "outFiles": [
+                "${workspaceFolder}/**/*.js"
+            ],
+            "runtimeExecutable": "/Users/pa1/.nvm/versions/node/v18.15.0/bin/node"
+        }
     ]
 }

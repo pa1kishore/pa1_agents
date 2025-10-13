@@ -1,0 +1,29 @@
+
+{
+    "compilerOptions": {
+      "target": "ES2022",
+      "module": "Node16",
+      "moduleResolution": "Node16",
+      "outDir": "./dist",
+      "rootDir": "./src",
+      "strict": false,
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules"]
+}
+
+// {
+//   "compilerOptions": {
+//     "typeRoots": ["./node_modules/@types", "./src/types"],
+//     "target": "ES6",
+//     "module": "CommonJS",
+//     "strict": true,
+//     "esModuleInterop": true,
+//     "outDir": "./build",
+//     "rootDir": "./src"
+//   },
+//   "include": ["src/**/*"]
+// }
