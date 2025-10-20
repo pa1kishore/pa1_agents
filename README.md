@@ -25,3 +25,11 @@ adk deploy agent_engine \
 ask_agent
 </pre>
 
+
+### Option-3 Deploying Ask Agents on cloud run using custom docker file
+<pre>
+gcloud run deploy ask-agent \
+--source=temp_staging \
+--project=$GOOGLE_CLOUD_PROJECT \
+--region=$GOOGLE_CLOUD_LOCATION 
+</pre>

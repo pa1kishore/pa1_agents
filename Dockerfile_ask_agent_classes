@@ -1,0 +1,44 @@
+
+FROM python:3.11-slim
+WORKDIR /app
+
+# Create a non-root user
+RUN adduser --disabled-password --gecos "" myuser
+
+# Switch to the non-root user
+USER myuser
+
+# Set up environment variables - Start
+ENV PATH="/home/myuser/.local/bin:$PATH"
+
+ENV GOOGLE_GENAI_USE_VERTEXAI=1
+ENV GOOGLE_CLOUD_PROJECT=lexical-helix-462005-m6
+ENV GOOGLE_CLOUD_LOCATION=us-east4
+
+# Set up environment variables - End
+
+# Install ADK - Start
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+# RUN pip install google-adk==1.15.1
+# RUN pip install mcp==1.15.1
+# RUN pip install google-cloud-secret-manager==2.24.0
+# RUN pip install google-cloud-aiplatform==1.118.0
+# RUN pip install python-dotenv==1.1.1
+
+# Install ADK - End
+
+# Copy agent - Start
+
+# Set permission
+COPY --chown=myuser:myuser "agents/ask_agent_classes/" "/app/agents/ask_agent_classes/"
+
+# Copy agent - End
+
+# Install Agent Deps - Start
+# No requirements.txt found.
+# Install Agent Deps - End
+
+EXPOSE 8000
+
+CMD adk web --port=8000 --host=0.0.0.0       "/app/agents"

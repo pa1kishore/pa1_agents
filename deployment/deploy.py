@@ -23,7 +23,7 @@ if project_root not in sys.path:
 import vertexai
 from vertexai import agent_engines
 from vertexai.preview.reasoning_engines import AdkApp
-from ask_agent.agent import root_agent
+from ask_agent_classes.agent import root_agent
 import logging
 import os
 from dotenv import set_key, load_dotenv
@@ -36,8 +36,8 @@ logger = logging.getLogger(__name__)
 GOOGLE_CLOUD_PROJECT = os.getenv("GOOGLE_CLOUD_PROJECT")
 GOOGLE_CLOUD_LOCATION = os.getenv("GOOGLE_CLOUD_LOCATION")
 STAGING_BUCKET = os.getenv("GOOGLE_CLOUD_STORAGE_BUCKET")
-AGENT_DISPLAY_NAME = 'ask_agent'
-AGENT_ID='sdsdgsdfg'
+AGENT_DISPLAY_NAME = 'ask_agent_classes'
+AGENT_ID='8033753232159277056'  # Update with your Agent Engine ID if needed
 
 ENV_FILE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".env"))
 
@@ -90,21 +90,26 @@ def upsert_agent():
         # If the agent doesn't exist, create it
         logging.error(f'Agent not found. {e}')
         logging.info("Agent not found. Creating a new agent...")
-        new_agent = agent_engines.create(
-                        app,
-                        display_name=AGENT_DISPLAY_NAME,
-                        description= f'{AGENT_DISPLAY_NAME} created on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}',
-                        requirements=[
-                            "google-cloud-aiplatform[adk,agent-engines]>=1.100.0,<2.0.0",
-                            "google-adk>=1.5.0,<2.0.0",
-                            "python-dotenv",
-                            "google-cloud-secret-manager"
-                        ],
-                        extra_packages=[
-                            "./ask_agent",
-                        ],
-                    )
-        logging.info(f"Successfully created new agent: {new_agent.display_name}")
+        try:
+
+            new_agent = agent_engines.create(
+                            app,
+                            display_name=AGENT_DISPLAY_NAME,
+                            description= f'{AGENT_DISPLAY_NAME} created on {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}',
+                            requirements=[
+                                "google-cloud-aiplatform[adk,agent-engines]>=1.100.0,<2.0.0",
+                                "google-adk[mcp]>=1.5.0,<2.0.0",
+                                "python-dotenv",
+                                "google-cloud-secret-manager"
+                                
+                            ],
+                            extra_packages=[
+                                f"./{AGENT_DISPLAY_NAME}",
+                            ],
+                        )
+            logging.info(f"Successfully created new agent: {new_agent.display_name}")
+        except Exception as create_e:
+            logging.error(f"Error creating new agent: {create_e}")
 
     return new_agent
 
