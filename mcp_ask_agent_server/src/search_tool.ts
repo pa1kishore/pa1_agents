@@ -32,9 +32,14 @@ const getSearchData = async (query: string, productTypes: string[]): Promise<any
 const getSearchDataTool = (server: McpServer) => {
     console.log("Registering search tool...");
 
-    server.tool("search", {
-            query: z.string().describe("The search query"),
-            productTypes: z.array(z.string()).describe("The product types to filter by (optional)").optional().default([])
+    server.registerTool("search", {
+            title: "Search Tool",
+            description: "Search for documents from the knowledge base.",
+            inputSchema: {
+                query: z.string().describe("The search query"),
+                productTypes: z.array(z.string()).describe("The product types to filter by (optional)").optional().default([])
+            },
+            
         },
         async ({query, productTypes}) => {
         return {

@@ -10,7 +10,8 @@ import getSearchDataTool from './search_tool';
 // Create an MCP server
 const server = new McpServer({
     name: 'mcp_ask_agent_server',
-    version: '1.0.0'
+    version: '1.0.0',
+    description: 'An MCP server for asking questions and retrieving information.'
 });
 
 registerServices(server)

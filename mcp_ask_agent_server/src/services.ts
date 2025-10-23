@@ -4,9 +4,13 @@ import  * as tools from "./tools.js";
 
 function additionTool(server: McpServer) {
     console.log("Registering addition tool...");
-    server.tool("addition", {
-            a: z.number().describe("The first number"),
-            b: z.number().describe("The second number")
+    server.registerTool("addition", {
+            title: "Addition Tool",
+            description: "Add two numbers",
+            inputSchema: {
+                a: z.number().describe("The first number"),
+                b: z.number().describe("The second number")
+            },
         },
         async ({a,b}) => {
         return {
@@ -23,9 +27,13 @@ function additionTool(server: McpServer) {
 function subtractionTool(server: McpServer) {
     console.log("Registering subtraction tool...");
 
-    server.tool("subtraction", {
-            a: z.number().describe("The first number"),
-            b: z.number().describe("The second number")
+    server.registerTool("subtraction", {
+            title: "Subtraction Tool",
+            description: "Subtract two numbers",
+            inputSchema: {
+                a: z.number().describe("The first number"),
+                b: z.number().describe("The second number")
+            },
         },
         async ({a,b}) => {
         return {
@@ -41,9 +49,13 @@ function subtractionTool(server: McpServer) {
 
 function multiplicationTool(server: McpServer) {
     console.log("Registering multiplication tool...");
-    server.tool("multiplication", {
-            a: z.number().describe("The first number"),
-            b: z.number().describe("The second number")
+    server.registerTool("multiplication", {
+            title: "Multiplication Tool",
+            description: "Multiply two numbers",
+            inputSchema: {
+                a: z.number().describe("The first number"),
+                b: z.number().describe("The second number")
+            },
         },
         async ({a,b}) => {
         return {
@@ -60,9 +72,13 @@ function multiplicationTool(server: McpServer) {
 function divisionTool(server: McpServer) {
     console.log("Registering division tool...");
 
-    server.tool("division", {
-            a: z.number().describe("The first number"),
-            b: z.number().describe("The second number")
+    server.registerTool("division", {
+            title: "Division Tool",
+            description: "Divide two numbers",
+            inputSchema: {
+                a: z.number().describe("The first number"),
+                b: z.number().describe("The second number")
+            },
         },
         async ({a,b}) => {
         return {

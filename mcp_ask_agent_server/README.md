@@ -5,3 +5,8 @@ gcloud run deploy mcp-ask-agent-server \
 --no-allow-unauthenticated --source .
 
 </pre>
+
+#### MCP inspector
+<pre>
+npx @modelcontextprotocol/inspector
+</pre>
