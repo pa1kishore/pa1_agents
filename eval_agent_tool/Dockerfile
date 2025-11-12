@@ -3,6 +3,7 @@ FROM python:3.13-slim
 
 # Set the working directory in the container
 WORKDIR /app
+ENV PYTHONPATH=/app
 
 # Copy the requirements file and install dependencies
 COPY requirements.txt .

@@ -38,3 +38,13 @@ curl -X POST <SERVICE_URL>/upload-excel/ \
 Use code with caution.
 
 This will return a JSON response with the processing details
+
+gcloud projects add-iam-policy-binding lexical-helix-462005-m6 \
+    --member="serviceAccount:908887859066-compute@developer.gserviceaccount.com" \
+    --role="roles/storage.objectAdmin"
+
+
+### Build
+gcloud builds submit --tag us-east4-docker.pkg.dev/lexical-helix-462005-m6/docker-repo/excel-processor:v1 .
+### Deploy and Run
+gcloud run deploy excel-processor-service --image us-east4-docker.pkg.dev/lexical-helix-462005-m6/docker-repo/excel-processor:v1 --platform managed --region us-east4 --allow-unauthenticated
