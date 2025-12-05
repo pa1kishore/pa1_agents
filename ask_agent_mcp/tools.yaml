@@ -1,0 +1,88 @@
+sources:
+  my-sqlite-source:
+    kind: sqlite
+    database: ./ask_agent_mcp/data.db # Path to your SQLite database file
+
+tools:
+  get-available-plans:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Retrieves all available plans from the database."
+    parameters: []
+    statement: SELECT * FROM plans;
+
+  get-available-plan-details:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Retrieves details for a specific available plan."
+    parameters:
+      - name: plan_id
+        type: integer
+        description: "The ID of the plan to retrieve details for."
+    statement: SELECT * FROM plans WHERE plan_id = $1;
+
+  get-all-customers:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Retrieves all customers from the database."
+    parameters: []
+    statement: SELECT * FROM customers;
+
+  get-customer-details:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Retrieves details for a specific customer."
+    parameters:
+      - name: customer_id
+        type: integer
+        description: "The ID of the customer to retrieve details for."
+    statement: SELECT * FROM customers WHERE cutomer_id = $1;
+
+  get-customer-plans:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Retrieves active plans associated with a specific customer."
+    parameters:
+      - name: customer_id
+        type: integer
+        description: "The ID of the customer to retrieve plans for."
+    statement: SELECT * FROM customer_plans WHERE customer_id = $1 and status = 'Active';
+
+  get-customer-plan-changes:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Retrieves plan change history for a specific customer."
+    parameters:
+      - name: customer_id
+        type: integer
+        description: "The ID of the customer to retrieve plan change history for."
+    statement: SELECT * FROM customer_plans WHERE customer_id = $1 ORDER BY start_date DESC;
+
+  insert-new-customer-plan:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Inserts a new plan for a specific customer."
+    parameters:
+      - name: customer_id
+        type: integer
+        description: "The ID of the customer."
+      - name: plan_id
+        type: integer
+        description: "The ID of the plan to assign to the customer."
+      - name: start_date
+        type: string
+        description: "The start date of the new plan (YYYY-MM-DD)."
+    statement: INSERT INTO customer_plans (customer_id, plan_id, start_date, status) VALUES ($1, $2, $3, 'Active');
+
+  inactivate-customer-plan-status:
+    kind: sqlite-sql
+    source: my-sqlite-source
+    description: "Updates the status of a customer's plan."
+    parameters:
+      - name: customer_plan_id
+        type: integer
+        description: "The ID of the customer plan to update."
+      - name: end_date
+        type: string
+        description: "The start date of the new plan (YYYY-MM-DD)."
+    statement: UPDATE customer_plans SET end_date = $2, status='Inactive' WHERE customer_plan_id = $1;
